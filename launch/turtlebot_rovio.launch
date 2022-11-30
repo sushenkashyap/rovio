@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node pkg="rovio" type="rovio_node" name="rovio" output="screen">
+  <param name="filter_config" value="$(find rovio)/cfg/turtlebot_rovio/rovio_turtlebot.info"/>
+  <param name="camera0_config" value="$(find rovio)/cfg/turtlebot_rovio/turtlebot_cam0.yaml"/>
+  <remap from="cam0/image_raw" to="camera/rgb/image_raw" />
+  <remap from="imu0" to="imu" />
+  </node>
+</launch>

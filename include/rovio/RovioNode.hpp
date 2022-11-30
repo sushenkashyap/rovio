@@ -232,7 +232,7 @@ class RovioNode{
 
     // Handle coordinate frame naming
     map_frame_ = "/map";
-    world_frame_ = "/world";
+    world_frame_ = "world";   //edit by SK /world=world
     camera_frame_ = "/camera";
     imu_frame_ = "/imu";
     nh_private_.param("map_frame", map_frame_, map_frame_);
