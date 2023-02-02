@@ -9,6 +9,6 @@
   <remap from="imu0" to="imu/data" />
   </node>
   
-   <node pkg="tf" type="static_transform_publisher" name="odom2world" args="1 0 0 0 0 0 1 /world /odom 100" />
+   <node pkg="tf" type="static_transform_publisher" name="odom2world" args="0 0 0 0 0 0 1 /world /odom 100" />
    
 </launch>
