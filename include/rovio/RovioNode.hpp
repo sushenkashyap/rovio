@@ -47,6 +47,8 @@
 #include <std_srvs/Empty.h>
 #include <tf/transform_broadcaster.h>
 #include <visualization_msgs/Marker.h>
+//to publish tracker image as ROS topic
+#include <image_transport/image_transport.h> 
 
 #include <rovio/SrvResetToPose.h>
 #include "rovio/RovioFilter.hpp"
@@ -146,6 +148,7 @@ class RovioNode{
   ros::Publisher pubMarkers_;          /**<Publisher: Ros line marker, indicating the depth uncertainty of a landmark.*/
   ros::Publisher pubExtrinsics_[mtState::nCam_];
   ros::Publisher pubImuBias_;
+  image_transport::Publisher pubTrackImg_;  //Tracker Image Publisher
 
   // Ros Messages
   geometry_msgs::TransformStamped transformMsg_;
@@ -223,6 +226,10 @@ class RovioNode{
     pubPcl_ = nh_.advertise<sensor_msgs::PointCloud2>("rovio/pcl", 1);
     pubPatch_ = nh_.advertise<sensor_msgs::PointCloud2>("rovio/patch", 1);
     pubMarkers_ = nh_.advertise<visualization_msgs::Marker>("rovio/markers", 1 );
+	
+	// Advertise Tracker Image
+	image_transport::ImageTransport it(nh_);
+	pubTrackImg_ = it.advertise("rovio/tracker_image", 1);
 
     pub_T_J_W_transform = nh_.advertise<geometry_msgs::TransformStamped>("rovio/T_G_W", 1);
     for(int camID=0;camID<mtState::nCam_;camID++){
@@ -653,8 +660,19 @@ class RovioNode{
       if(mpFilter_->safe_.t_ > oldSafeTime){ // Publish only if something changed
         for(int i=0;i<mtState::nCam_;i++){
           if(!mpFilter_->safe_.img_[i].empty() && mpImgUpdate_->doFrameVisualisation_){
-            cv::imshow("Tracker" + std::to_string(i), mpFilter_->safe_.img_[i]);
-            cv::waitKey(3);
+            
+			// Comment below lines to stop publishing Tracker Image as ROS Topic
+			cv_bridge::CvImage img_bridge;
+			img_bridge = cv_bridge::CvImage(std_msgs::Header(), "bgr8", mpFilter_->safe_.img_[i]);
+			sensor_msgs::Image img_msg;
+			img_bridge.toImageMsg(img_msg);
+
+			// publish the image as a ROS topic
+			pubTrackImg_.publish(img_msg);
+
+            // Uncomment below lines to view Tracker Image as CV Imagestream 
+			// cv::imshow("Tracker" + std::to_string(i), mpFilter_->safe_.img_[i]);
+            // cv::waitKey(3);
           }
         }
         if(!mpFilter_->safe_.patchDrawing_.empty() && mpImgUpdate_->visualizePatches_){

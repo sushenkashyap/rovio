@@ -27,5 +27,6 @@
   <depend>nav_msgs</depend>
   <depend>tf</depend>
   <depend>rosbag</depend>
+  <depend>image_transport</depend>
   <depend>yaml_cpp_catkin</depend>
 </package>

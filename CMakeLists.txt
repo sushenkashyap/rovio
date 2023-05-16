@@ -69,6 +69,7 @@ find_package(catkin REQUIRED COMPONENTS
 	std_msgs
 	tf
 	rosbag
+	image_transport
 )
 
 add_service_files(
@@ -97,6 +98,7 @@ catkin_package(
 	std_msgs
 	tf
 	rosbag
+	image_transport
   yaml_cpp_catkin
 )
 
